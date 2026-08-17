@@ -85,3 +85,13 @@ def move_to_validated(file):
     validatedFolder.mkdir(parents= True, exist_ok= True)
     destination =validatedFolder / file.name
     file.rename(destination)
+
+    return destination
+
+
+def get_validated_files():
+    validatedFolder = Path(__file__).resolve().parent.parent / "data" / "validated_files"
+
+    files = list(validatedFolder.iterdir())
+
+    return files

@@ -2,7 +2,11 @@ from ingestion_manager import(
 get_incoming_files, validate_fileName, read_configuration,
 match_configuration, validate_date,
 validate_extension, validate_columns,
-get_row_count, move_to_validated
+get_row_count, move_to_validated, get_validated_files
+)
+
+from preprocessing_engine import (
+preprocessed_file
 )
 
 files = get_incoming_files()
@@ -31,9 +35,18 @@ for file in files:
 
         if validColumn:
             print(f"{file.name} -> VALID")
-            move_to_validated(file)
+            validatedFile = move_to_validated(file)
+
+            preprocessed_file(validatedFile)
+
         else:
             print(f"{file.name} -> INVALID")
     else:
         print(f"{file.name} -> INVALID")
 
+
+validatedFiles = get_validated_files()
+
+for file in validatedFiles:
+    preprocessed_file(file)
+    print(f"{file.name} ----> Processing Completed")
