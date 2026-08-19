@@ -4,9 +4,11 @@ match_configuration, validate_date,
 validate_extension, validate_columns,
 get_row_count, move_to_validated, get_validated_files
 )
-
 from preprocessing_engine import (
 preprocessed_file
+)
+from transformation_engine import (
+build_curated_data
 )
 
 files = get_incoming_files()
@@ -49,4 +51,7 @@ validatedFiles = get_validated_files()
 
 for file in validatedFiles:
     preprocessed_file(file)
-    print(f"{file.name} ----> Processing Completed")
+    #print(f"{file.name} ----> Processing Completed")
+
+
+build_curated_data()
