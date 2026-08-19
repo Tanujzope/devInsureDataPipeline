@@ -8,7 +8,7 @@ from preprocessing_engine import (
 preprocessed_file
 )
 from transformation_engine import (
-build_curated_data
+build_curated_and_semantic
 )
 
 files = get_incoming_files()
@@ -54,4 +54,4 @@ for file in validatedFiles:
     #print(f"{file.name} ----> Processing Completed")
 
 
-build_curated_data()
+build_curated_and_semantic()

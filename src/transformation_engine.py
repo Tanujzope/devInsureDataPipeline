@@ -1,8 +1,11 @@
 import pandas as pd
 from pathlib import Path
 
-def build_curated_data():
-    preprocessed_folder = Path(__file__).resolve().parent.parent / "data" / "preprocessed"
+
+def build_curated_and_semantic():
+
+    preprocessed_folder = Path(__file__).resolve().parent.parent/ "data"/ "preprocessed"
+
 
     claimsFile = preprocessed_folder / "claims_20260815.parquet"
     customersFile = preprocessed_folder / "customers_20260815.parquet"
@@ -24,21 +27,49 @@ def build_curated_data():
     print("payment rows : ", len(paymentsDf))
     print("policies rows : ", len(policiesDf))
 
-    claim_policy_df = pd.merge(claimsDf, policiesDf, on='Policy_ID', how= "left", suffixes=("_claims", "_policies"))
+    # -----------------------------------------
+    # CURATED LAYER - JOINS
+    # -----------------------------------------
+
+    claim_policy_df = pd.merge(
+        claimsDf,
+        policiesDf,
+        on="Policy_ID",
+        how="left",
+        suffixes=("_claims", "_policies")
+    )
 
     print("Claim and policy merged successfully")
     print("Claim Policy Rows: ", len(claim_policy_df))
     print("Claim Policy Columns : ", list(claim_policy_df.columns))
 
-    claim_policy_customer_df = pd.merge(claim_policy_df, customersDf, on="Customer_ID", how="left", suffixes=("","_customers"))
+    claim_policy_customer_df = pd.merge(
+        claim_policy_df,
+        customersDf,
+        on="Customer_ID",
+        how="left",
+        suffixes=("", "_customers")
+    )
+
     print("Claim_policy_df and customers merged successfully")
     print("Claim Policy customers Rows: ", len(claim_policy_customer_df))
     print("Claim Policy customers Columns : ", list(claim_policy_customer_df.columns))
 
-    claim_policy_customer_payment_df = pd.merge(claim_policy_customer_df, paymentsDf, how="left", on="Policy_ID", suffixes=("", "_payments"))
+    claim_policy_customer_payment_df = pd.merge(
+        claim_policy_customer_df,
+        paymentsDf,
+        how="left",
+        on="Policy_ID",
+        suffixes=("", "_payments")
+    )
+
     print("Claim_policy_customer_df and payment merged successfully")
     print("Claim Policy customers payment Rows: ", len(claim_policy_customer_payment_df))
     print("Claim Policy customers payment Columns : ", list(claim_policy_customer_payment_df.columns))
+
+    # -----------------------------------------
+    # CURATED COLUMNS
+    # -----------------------------------------
 
     curated_columns = [
         "Claim_ID",
@@ -64,15 +95,80 @@ def build_curated_data():
     print("Curated Rows:", len(curated_df))
     print("Curated Columns:", list(curated_df.columns))
 
-    curated_folder = Path(__file__).resolve().parent.parent / "data" / "curated"
-    curated_folder.mkdir(exist_ok=True, parents=True)
-    outputFile = curated_folder / "curated_enriched.parquet"
-    curated_df.to_parquet(outputFile, index=False)
-    print("curated file created successfully")
+    # -----------------------------------------
+    # SAVE CURATED FILE
+    # -----------------------------------------
 
-    verify_df = pd.read_parquet(outputFile)
+    curated_folder = (
+        Path(__file__).resolve().parent.parent
+        / "data"
+        / "curated"
+    )
+
+    curated_folder.mkdir(exist_ok=True, parents=True)
+
+    curatedFile = curated_folder / "claims_enriched.parquet"
+
+    curated_df.to_parquet(
+        curatedFile,
+        index=False
+    )
+
+    print("Curated file created successfully")
+
+    # -----------------------------------------
+    # CURATED FILE VERIFICATION
+    # -----------------------------------------
+
+    verify_df = pd.read_parquet(curatedFile)
+
     print("CURATED FILE VERIFICATION")
     print("Rows:", len(verify_df))
     print("Columns:", list(verify_df.columns))
 
+    # -----------------------------------------
+    # SEMANTIC LAYER
+    # -----------------------------------------
 
+    policy_type_agg = curated_df.groupby("Policy_Type").agg(
+        avg_claim_amount=pd.NamedAgg(
+            column="Claim_Amount",
+            aggfunc="mean"
+        ),
+        count_claims=pd.NamedAgg(
+            column="Claim_ID",
+            aggfunc="count"
+        )
+    ).reset_index()
+
+    # -----------------------------------------
+    # SAVE SEMANTIC FILE
+    # -----------------------------------------
+
+    semantic_folder = (
+        Path(__file__).resolve().parent.parent
+        / "data"
+        / "semantic"
+    )
+
+    semantic_folder.mkdir(exist_ok=True, parents=True)
+
+    semanticFile = semantic_folder / "PolicyTypeAgg.parquet"
+
+    policy_type_agg.to_parquet(
+        semanticFile,
+        index=False
+    )
+
+    print("Semantic file created successfully")
+
+    # -----------------------------------------
+    # SEMANTIC FILE VERIFICATION
+    # -----------------------------------------
+
+    semantic_verify_df = pd.read_parquet(semanticFile)
+
+    print("SEMANTIC FILE VERIFICATION")
+    print("Rows:", len(semantic_verify_df))
+    print("Columns:", list(semantic_verify_df.columns))
+    print(semantic_verify_df)
