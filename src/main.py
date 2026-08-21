@@ -13,6 +13,12 @@ build_curated_and_semantic
 
 from retention_manager import archive_file
 
+from audit_logger import(
+archilog_ingestion,
+log_preprocess,
+log_retention
+)
+
 
 files = get_incoming_files()
 
@@ -60,3 +66,7 @@ for file in validatedFiles:
 build_curated_and_semantic()
 
 archive_file()
+
+archilog_ingestion()
+log_preprocess()
+log_retention()
