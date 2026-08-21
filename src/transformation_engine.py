@@ -17,15 +17,15 @@ def build_curated_and_semantic():
     paymentsDf = pd.read_parquet(paymentFile)
     policiesDf = pd.read_parquet(policiesFile)
 
-    print("claim columns : ", list(claimsDf.columns))
-    print("customer columns : ", list(customersDf.columns))
-    print("Payment columns : ", list(paymentsDf.columns))
-    print("Policies columns : ", list(policiesDf.columns))
+    # print("claim columns : ", list(claimsDf.columns))
+    # print("customer columns : ", list(customersDf.columns))
+    # print("Payment columns : ", list(paymentsDf.columns))
+    # print("Policies columns : ", list(policiesDf.columns))
 
-    print("claim rows : ", len(claimsDf))
-    print("customer rows : ", len(customersDf))
-    print("payment rows : ", len(paymentsDf))
-    print("policies rows : ", len(policiesDf))
+    # print("claim rows : ", len(claimsDf))
+    # print("customer rows : ", len(customersDf))
+    # print("payment rows : ", len(paymentsDf))
+    # print("policies rows : ", len(policiesDf))
 
     # -----------------------------------------
     # CURATED LAYER - JOINS
@@ -39,9 +39,9 @@ def build_curated_and_semantic():
         suffixes=("_claims", "_policies")
     )
 
-    print("Claim and policy merged successfully")
-    print("Claim Policy Rows: ", len(claim_policy_df))
-    print("Claim Policy Columns : ", list(claim_policy_df.columns))
+    # print("Claim and policy merged successfully")
+    # print("Claim Policy Rows: ", len(claim_policy_df))
+    # print("Claim Policy Columns : ", list(claim_policy_df.columns))
 
     claim_policy_customer_df = pd.merge(
         claim_policy_df,
@@ -51,9 +51,9 @@ def build_curated_and_semantic():
         suffixes=("", "_customers")
     )
 
-    print("Claim_policy_df and customers merged successfully")
-    print("Claim Policy customers Rows: ", len(claim_policy_customer_df))
-    print("Claim Policy customers Columns : ", list(claim_policy_customer_df.columns))
+    # print("Claim_policy_df and customers merged successfully")
+    # print("Claim Policy customers Rows: ", len(claim_policy_customer_df))
+    # print("Claim Policy customers Columns : ", list(claim_policy_customer_df.columns))
 
     claim_policy_customer_payment_df = pd.merge(
         claim_policy_customer_df,
@@ -63,13 +63,9 @@ def build_curated_and_semantic():
         suffixes=("", "_payments")
     )
 
-    print("Claim_policy_customer_df and payment merged successfully")
-    print("Claim Policy customers payment Rows: ", len(claim_policy_customer_payment_df))
-    print("Claim Policy customers payment Columns : ", list(claim_policy_customer_payment_df.columns))
-
-    # -----------------------------------------
-    # CURATED COLUMNS
-    # -----------------------------------------
+    # print("Claim_policy_customer_df and payment merged successfully")
+    # print("Claim Policy customers payment Rows: ", len(claim_policy_customer_payment_df))
+    # print("Claim Policy customers payment Columns : ", list(claim_policy_customer_payment_df.columns))
 
     curated_columns = [
         "Claim_ID",
@@ -91,9 +87,9 @@ def build_curated_and_semantic():
 
     curated_df = claim_policy_customer_payment_df[curated_columns]
 
-    print("Curated columns selected successfully")
-    print("Curated Rows:", len(curated_df))
-    print("Curated Columns:", list(curated_df.columns))
+    # print("Curated columns selected successfully")
+    # print("Curated Rows:", len(curated_df))
+    # print("Curated Columns:", list(curated_df.columns))
 
     # -----------------------------------------
     # SAVE CURATED FILE
@@ -114,7 +110,7 @@ def build_curated_and_semantic():
         index=False
     )
 
-    print("Curated file created successfully")
+    # print("Curated file created successfully")
 
     # -----------------------------------------
     # CURATED FILE VERIFICATION
@@ -122,9 +118,9 @@ def build_curated_and_semantic():
 
     verify_df = pd.read_parquet(curatedFile)
 
-    print("CURATED FILE VERIFICATION")
-    print("Rows:", len(verify_df))
-    print("Columns:", list(verify_df.columns))
+    # print("CURATED FILE VERIFICATION")
+    # print("Rows:", len(verify_df))
+    # print("Columns:", list(verify_df.columns))
 
     # -----------------------------------------
     # SEMANTIC LAYER
@@ -160,15 +156,12 @@ def build_curated_and_semantic():
         index=False
     )
 
-    print("Semantic file created successfully")
+    # print("Semantic file created successfully")
 
-    # -----------------------------------------
-    # SEMANTIC FILE VERIFICATION
-    # -----------------------------------------
 
     semantic_verify_df = pd.read_parquet(semanticFile)
 
-    print("SEMANTIC FILE VERIFICATION")
-    print("Rows:", len(semantic_verify_df))
-    print("Columns:", list(semantic_verify_df.columns))
-    print(semantic_verify_df)
+    # print("SEMANTIC FILE VERIFICATION")
+    # print("Rows:", len(semantic_verify_df))
+    # print("Columns:", list(semantic_verify_df.columns))
+    # print(semantic_verify_df)

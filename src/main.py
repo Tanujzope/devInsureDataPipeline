@@ -11,6 +11,9 @@ from transformation_engine import (
 build_curated_and_semantic
 )
 
+from retention_manager import archive_file
+
+
 files = get_incoming_files()
 
 
@@ -55,3 +58,5 @@ for file in validatedFiles:
 
 
 build_curated_and_semantic()
+
+archive_file()
